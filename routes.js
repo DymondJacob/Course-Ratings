@@ -109,6 +109,38 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
   });
 });
 
+
+// USE THIS ROUTE FOR REVIEWS, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
+router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
+  Course.findById({_id: req.params.cID})
+  .populate('user')
+  .populate('reviews')
+  .exec(function(err,courses) {
+    if (err) {
+      err.status = 400;
+      return next(err);
+    }
+    if(req.course.user._id.toString() === req.courses.usere._id.toString()){
+      let err = new Error;
+      err.message = "You aren't able to review your own course";
+      err.status = 400;
+      return next(err);
+    } else {
+      Review.create(req.body, function(err){
+        if (err){
+          err.status = 400;
+          return next (err);
+        }
+        res.location('/:cID');
+        res.status(201).json();
+      })
+    }
+  });
+});
+
+
+module.exports = router;
+
 // POST /api/courses/:courseId/reviews 201 -
 // Creates a review for the specified course ID, sets the Location header to the related course, and returns no content
 /* router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
@@ -148,34 +180,3 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
 res.status(201);
 res.location('/courses/:cID').json();
 });*/
-
-// Another Update if the above one fails
-router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
-  Course.findById({_id: req.params.cID})
-  .populate('user')
-  .populate('reviews')
-  .exec(function(err,courses) {
-    if (err) {
-      err.status = 400;
-      return next(err);
-    }
-    if(req.course.user._id.toString() === req.courses.usere._id.toString()){
-      let err = new Error;
-      err.message = "You aren't able to review your own course";
-      err.status = 400;
-      return next(err);
-    } else {
-      Review.create(req.body, function(err){
-        if (err){
-          err.status = 400;
-          return next (err);
-        }
-        res.location('/:cID');
-        res.status(201).json();
-      })
-    }
-  });
-});
-
-
-module.exports = router;
