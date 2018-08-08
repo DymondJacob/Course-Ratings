@@ -135,7 +135,19 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
       res.json();
     });
   });
+  /* Updated review post route
+  const review = new Review(req.body);
+  review.user = req.currentUser;
+  review.save(function(err,review){
+    if(err) return next(err);
+    req.course.reviews.push(review._id);
+    req.course.save(function(err,course){
+      if(err) return next(err);
+    });
+  });
+res.status(201);
+res.location('/courses/:cID').json();
 });
-
+*/
 
 module.exports = router;
