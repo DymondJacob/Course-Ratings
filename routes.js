@@ -111,7 +111,7 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
 
 
 // USE THIS ROUTE FOR REVIEWS, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
-router.post('/:cID/reviews', mid.requiresLogin, function(req, res, next) {
+router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
   Course.findById({_id: req.params.cID})
   .populate('user')
   .populate('reviews')
