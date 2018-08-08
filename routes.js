@@ -131,7 +131,7 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
     req.course.reviews.push(review);
     req.course.save(function(err, course) {
       res.status(201);
-      res.location('/');
+      res.location('/courses/:cID');
       res.json();
     });
   });
