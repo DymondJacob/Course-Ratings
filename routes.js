@@ -111,7 +111,7 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
 
 
 // USE THIS ROUTE FOR REVIEWS, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
-router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
+router.post('/:cID/reviews', mid.requiresLogin, function(req, res, next) {
   Course.findById({_id: req.params.cID})
   .populate('user')
   .populate('reviews')
@@ -120,7 +120,7 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
       err.status = 400;
       return next(err);
     }
-    if(req.course.user._id.toString() === req.courses.usere._id.toString()){
+    if(req.course.user.toString() === req.currentUser.id){
       let err = new Error;
       err.message = "You aren't able to review your own course";
       err.status = 400;
@@ -131,7 +131,7 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
           err.status = 400;
           return next (err);
         }
-        res.location('/:cID');
+        res.location('/');
         res.status(201).json();
       })
     }
