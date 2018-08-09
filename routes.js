@@ -109,8 +109,45 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
   });
 });
 
+//POST /api/courses/:cID/REVIEWS
+router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next){
+  req.course.reviews.push(req.body);
+  req.course.save(function(err,course){
+    if(err) return res.json(err);
+    res.status(201);
+    res.location('/:cID').json();
+  });
+});
+module.exports = router;
 
-// USE THIS ROUTE FOR REVIEWS, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
+// Original Review Route ( Was throwing errors, but still works in the way it is sappose to)
+/*router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
+  // Only create a review if the course is not created by the current user
+  console.log('req.course.user.toString() is ', req.course.user.toString(), 'and is a type of', typeof req.course.user, ' and req.currentUser.id is ', req.currentUser.id, 'and is typeof ', typeof req.currentUser.id);
+  if (req.course.user.toString() === req.currentUser.id) {
+    const err = new Error("You can't review your own course ya dingus");
+    err.status = 400; // Bad request status code
+    return next(err);
+  }
+
+  const review = req.body;
+  review.user = req.currentUser;
+
+  new Review(review).save(function(err, review) {
+    if (err) {
+      return next(err);
+    }
+
+    req.course.reviews.push(review);
+    req.course.save(function(err, course) {
+      res.status(201);
+      res.location('/');
+      res.json();
+    });
+  });
+}); */
+
+/* USE THIS ROUTE FOR REVIEWS if above/below don't work, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
 router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
   Course.findById({_id: req.params.cID})
   .populate('user')
@@ -136,10 +173,7 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
       })
     }
   });
-});
-
-
-module.exports = router;
+});*/
 
 // POST /api/courses/:courseId/reviews 201 -
 // Creates a review for the specified course ID, sets the Location header to the related course, and returns no content
