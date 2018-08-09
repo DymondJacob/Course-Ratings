@@ -109,7 +109,7 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
   });
 });
 
-//POST /api/courses/:cID/REVIEWS (Simple, not going for exceeds on this route, this route does work)
+//POST /api/courses/:cID/REVIEWS (Simple, not going for exceeds on this route, previous route threw errors, this route does work)
 router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next){
   req.course.reviews.push(req.body);
   req.course.save(function(err,course){
@@ -119,98 +119,3 @@ router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next)
   });
 });
 module.exports = router;
-
-// Original Review Route ( Was throwing errors, but still works in the way it is sappose to)
-/*router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
-  // Only create a review if the course is not created by the current user
-  console.log('req.course.user.toString() is ', req.course.user.toString(), 'and is a type of', typeof req.course.user, ' and req.currentUser.id is ', req.currentUser.id, 'and is typeof ', typeof req.currentUser.id);
-  if (req.course.user.toString() === req.currentUser.id) {
-    const err = new Error("You can't review your own course ya dingus");
-    err.status = 400; // Bad request status code
-    return next(err);
-  }
-
-  const review = req.body;
-  review.user = req.currentUser;
-
-  new Review(review).save(function(err, review) {
-    if (err) {
-      return next(err);
-    }
-
-    req.course.reviews.push(review);
-    req.course.save(function(err, course) {
-      res.status(201);
-      res.location('/');
-      res.json();
-    });
-  });
-}); */
-
-/* USE THIS ROUTE FOR REVIEWS if above/below don't work, THIS ONE WORKS :), (If for some reason it doesn't work, please try the routes below)
-router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
-  Course.findById({_id: req.params.cID})
-  .populate('user')
-  .populate('reviews')
-  .exec(function(err,courses) {
-    if (err) {
-      err.status = 400;
-      return next(err);
-    }
-    if(req.course.user.toString() === req.currentUser.id){
-      let err = new Error;
-      err.message = "You aren't able to review your own course";
-      err.status = 400;
-      return next(err);
-    } else {
-      Review.create(req.body, function(err){
-        if (err){
-          err.status = 400;
-          return next (err);
-        }
-        res.location('/');
-        res.status(201).json();
-      })
-    }
-  });
-});*/
-
-// POST /api/courses/:courseId/reviews 201 -
-// Creates a review for the specified course ID, sets the Location header to the related course, and returns no content
-/* router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next) {
-  // Only create a review if the course is not created by the current user
-  console.log('req.course.user.toString() is ', req.course.user, 'and is a type of', typeof req.course.user, ' and req.currentUser.id is ', req.currentUser.id, 'and is typeof ', typeof req.currentUser.id);
-  if (req.course.user === req.currentUser.id) {
-    const err = new Error("You can't review your own course");
-    err.status = 400; // Bad request status code
-    return next(err);
-  }
-
-  const review = req.body;
-  review.user = req.currentUser;
-
-  new Review(review).save(function(err, review) {
-    if (err) {
-      return next(err);
-    }
-
-    req.course.reviews.push(review);
-    req.course.save(function(err, course) {
-      res.status(201);
-      res.location('/courses/:cID');
-      res.json();
-    });
-  });*/
-  /*Updated review post route, use this one if above route doesnt work
-  const review = new Review(req.body);
-  review.user = req.currentUser;
-  review.save(function(err,review){
-    if(err) return next(err);
-    req.course.reviews.push(review._id);
-    req.course.save(function(err,course){
-      if(err) return next(err);
-    });
-  });
-res.status(201);
-res.location('/courses/:cID').json();
-});*/
