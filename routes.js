@@ -109,7 +109,7 @@ router.put('/courses/:cID', mid.requiresLogin, function(req, res, next) {
   });
 });
 
-//POST /api/courses/:cID/REVIEWS
+//POST /api/courses/:cID/REVIEWS (Simple, not going for exceeds on this route, this route does work)
 router.post('/courses/:cID/reviews', mid.requiresLogin, function(req, res, next){
   req.course.reviews.push(req.body);
   req.course.save(function(err,course){
